@@ -15,6 +15,6 @@ export class Task extends BaseEntity {
   @Column()
   status: TaskStatus;
   
-  @Column()
+  @Column({unique:true})
   uuid: string;
 }
