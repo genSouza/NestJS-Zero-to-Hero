@@ -13,7 +13,7 @@ export class UserRepository extends Repository<Users> {
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
 
-     const user = new Users();
+    const user = new Users();
     user.salt = await bcrypt.genSalt();
     user.username = username;
     user.password = await this.hashPassword(password, user.salt);
@@ -21,7 +21,6 @@ export class UserRepository extends Repository<Users> {
 
     try {
       await user.save();
-      console.log(user.password);
     } catch (error) {
       if (error.code === '23505') {
         //duplicate username
@@ -32,6 +31,19 @@ export class UserRepository extends Repository<Users> {
     }
   }
 
+  async validateUserPassword(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<string> {
+    const { username, password } = authCredentialsDto;
+    const user = await this.findOne({ username });
+    
+
+    if (user && await user.validatePassword(password)) {
+      return user.username;
+    } else {
+      return null;
+    }
+  }
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
   }
