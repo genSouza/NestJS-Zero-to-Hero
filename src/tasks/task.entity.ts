@@ -3,7 +3,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToMany,
+  ManyToOne,
 } from 'typeorm';
 import { TaskStatus } from './task-status.enum';
 import { Users } from '../auth/user.entity';
@@ -25,10 +25,13 @@ export class Task extends BaseEntity {
   @Column({ unique: true })
   uuid: string;
 
-  @ManyToMany(
+  @ManyToOne(
     type => Users,
     user => user.tasks,
     { eager: false },
   )
   user: Users;
+
+  @Column()
+  userId: number;
 }
